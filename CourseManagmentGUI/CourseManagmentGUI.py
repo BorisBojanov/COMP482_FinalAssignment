@@ -32,7 +32,7 @@ j. The system should automatically calculate display the final grade of the stud
 k. The user should be able to see a list of assessments, including the calculated final grade for the selected student. 
     Done
 l. There should be a button to shut down the system, but before shutting down the application, the system must save/pickle the data for each course back to its binary file.
-    
+    Done
 
 
 4. (5 marks) Your analysis and design of the system should be well documented in your assignment
@@ -623,7 +623,8 @@ class CourseManagementGUI:
         )
 
     # Student management methods
-    def addStudentForm(self, window=None, object=None, **kwargs):
+    def addStudentForm(self, window, object, **kwargs):
+        
     def addStudentForm(self):
         def submit():
             name = self.studentNameEntry.get().strip()
