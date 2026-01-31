@@ -38,9 +38,9 @@ class Course:
         self.revisionNumber = revisionNumber
         self.date = dateOffered
         self.professorName = professorName
-        self.assessments = []
-        self.filepath = None
-        self.registeredStudents = []
+        self.assessments: List[tuple] = []
+        self.filepath: Optional[str] = None
+        self.registeredStudents: List[Student] = []
 
         # list of Student instances
         if students is not None: #students leaking between courses
