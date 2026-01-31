@@ -1,52 +1,8 @@
 '''
-The CourseManagmentGUI, GUI application should meet the following criteria:
-TODO:
-a.  There should be a button for adding a new course to the system, 
-    which will open a form for input and save basic course info previously mentioned, 
-    with the list of students empty. 
+The CourseManagmentGUI, GUI application:
 
-    Note that when saving the basic course info, 
-    the system should be able to check whether the total weight of all assessment items make up 100%.
-    DONE
-b.  new course is added to the system, 
-    Create a unique binary file for permanent storage of the course data.
-    DONE
-c.  At the start of the system, 
-    the system should automatically load all courses from their respective binary files 
-    to restore their internal object representation.
-    DONE
-d. There should be a button to get a list of courses being offered to students.
-    DONE
-e. The user should be able to select a course from the list.
-    Done
-f. The user should be able to add students to the selected course.
-    Done
-g. The user should be to see a list of students in the course.
-    Done
-h. The user should be able to select a student from the list.
-    Done
-i. The user should be able to record an assessment for the selected student.
-    Done
-j. The system should automatically calculate display the final grade of the student for the course.
-    Done
-k. The user should be able to see a list of assessments, including the calculated final grade for the selected student. 
-    Done
-l. There should be a button to shut down the system, but before shutting down the application, the system must save/pickle the data for each course back to its binary file.
-    Done
-
-
-4. (5 marks) Your analysis and design of the system should be well documented in your assignment
-report.
-    
-    
-5. (5 marks) Within each of your program files, there should be a docstring at the beginning stating the
-name and purpose of the file, as well as the ownership and revision history. One docstring is
-required for each class and function/method class. End-of-line comments are desired when deemed
-necessary.
-
-
-IDEA
 TODO: Make the GUI show in the bottom of the window, which course and student and or assessment is selected currently.
+
 '''
 
 
@@ -226,7 +182,7 @@ class CourseManagementGUI:
     7. Define submit callback with validation logic
 
     DESIGN:
-    The addForm method accepts:
+    The CreatForm method accepts:
     - title: Window title
     - geometry: Window size (e.g., "400x300")
     - form_title: Optional form header text
@@ -237,7 +193,7 @@ class CourseManagementGUI:
     - validation_callback: Optional pre-submission validation
 
     """
-    def addForm(self, 
+    def CreatForm(self, 
                 title="Form", 
                 geometry="400x300",
                 form_title=None,
@@ -308,7 +264,7 @@ class CourseManagementGUI:
                 {'text': 'Cancel', 'command': lambda: form_refs['window'].destroy(), 'column': 1}
             ]
         }
-        form_refs = self.addForm(**form_config)
+        form_refs = self.CreatForm(**form_config)
         """
         
         # Check preconditions
@@ -421,21 +377,6 @@ class CourseManagementGUI:
             'frame': frame,
             'widgets': widgets
         }
-
-
-    def changeCourseBinAttribute(self, courseObj:CourseClass.Course, NEWattribute:str, OLDattribute:str, filepath ,newValue):
-            # ---- MIGRATION: old -> new attribute name ----
-            if hasattr(courseObj, OLDattribute) and not hasattr(courseObj, NEWattribute):
-                setattr(courseObj, NEWattribute, getattr(courseObj, OLDattribute))
-                delattr(courseObj, OLDattribute)
-                NEWattribute = OLDattribute
-                # re-save so next run is clean
-                with open(filepath, "wb") as f:
-                    pickle.dump(courseObj, f)
-
-                courseObj.filepath = filepath # store filepath in object for future use
-                print(f"Migrated {OLDattribute} to {NEWattribute} in {filepath}")
-            return courseObj
 
     # file loading and saving methods
     def checkDataDirectory(self):
@@ -604,7 +545,7 @@ class CourseManagementGUI:
             messagebox.showinfo("Success", f"Course '{courseName}' submitted!\\nSaved to: {savedPath}")
             form_refs['window'].destroy() # type: ignore
         
-        form_refs = self.addForm(
+        form_refs = self.CreatForm(
             title="New Course Form",
             geometry="500x400",
             form_title="New Course Form",
@@ -646,7 +587,7 @@ class CourseManagementGUI:
     # ============================================================================
 
     def recordAssessmentForm_REFACTORED(self):
-        """Refactored recordAssessmentForm using addForm with listbox"""
+        """Refactored recordAssessmentForm using CreatForm with listbox"""
         
         def saveMark():
             selection = listbox.curselection()
@@ -689,7 +630,7 @@ class CourseManagementGUI:
             return (True, "")
         
         # Create form
-        form_refs = self.addForm(
+        form_refs = self.CreatForm(
             title="Record Assessment Mark",
             geometry="560x360",
             form_title=f"Student: {self.selectedStudent.name} ({self.selectedStudent.studentID})",
@@ -827,7 +768,7 @@ class CourseManagementGUI:
     # ============================================================================
 
     def addStudentForm(self):
-        """Refactored using addForm method"""
+        """Refactored using CreatForm method"""
 
         
         def submit():
@@ -874,7 +815,7 @@ class CourseManagementGUI:
             return (True, "")
         
         # Configure and create form
-        form_refs = self.addForm(
+        form_refs = self.CreatForm(
             title="Add Student",
             geometry="400x300",
             form_title=f"Add A Student to: {self.selectedCourse.nameAbreviated if self.selectedCourse else 'N/A'}",
