@@ -810,7 +810,7 @@ class CourseManagementGUI:
             self.courseForm,
             grid={ "row": 3, "column": 0, "pady": 10, "sticky": "w"}
         )
-        newCourse
+        
 
         # Show list of students in selected course
         listStudents = self.createButton(
@@ -964,22 +964,37 @@ class CourseManagementGUI:
             frame,
             "Select Student",
             lambda: confirmSelection(),
-            grid={"row": 2, "column": 0, "pady": 10, "sticky": "ew"},
+            grid={"row": 2, "column": 0, "pady": 10, "sticky": "w"},
             state="disabled"
         )
-        cancelButton = self.createButton(
+        # Close button
+        self.createButton(
             frame,
             "Close",
             window.destroy,
-            grid={"row": 2, "column": 1, "pady": 10, "sticky": "ew"}
+            grid={"row": 2, "column": 1, "pady": 10, "sticky": "w"}
         )
-                # Add Student
-        
+        # View Assessments + Final Grade
+        self.createButton(
+            frame,
+            "View Assessments + Final Grade",
+            self.showStudentAssessments,
+            grid={"row": 3,"column": 0, "pady": 10, "sticky": "w"}
+        )
+
+        self.createButton(
+            frame,
+            "Record Assessment (Selected Student)",
+            self.recordAssessmentForm,
+            grid={"row": 4,"column": 0, "pady": 8, "sticky": "w"}
+        )
+
+        # Add Student
         self.createButton(
             frame,
             "Add Student to Selected Course",
             self.addStudentForm,
-            grid={"column": 0, "row": 3, "pady": 8, "padx": 10, "sticky": "w"}
+            grid={"row": 5, "column": 0, "pady": 8, "sticky": "w"}
         )
 
         listbox.bind("<<ListboxSelect>>", select)
@@ -1164,20 +1179,6 @@ class CourseManagementGUI:
             "Show List of Courses",
             self.showCourseList,
             grid={"column": 0, "row": 1, "pady": 8, "sticky": "w"}
-        )
-
-        self.createButton(
-            self.frame,
-            "Record Assessment (Selected Student)",
-            self.recordAssessmentForm,
-            grid={"column": 0, "row": 4, "pady": 8, "sticky": "w"}
-        )
-
-        self.createButton(
-            self.frame,
-            "View Assessments + Final Grade",
-            self.showStudentAssessments,
-            grid={"column": 0, "row": 5, "pady": 8, "sticky": "w"}
         )
 
         # Quit
