@@ -811,7 +811,7 @@ class CourseManagementGUI:
 
         window = tk.Toplevel(self.root)
         window.title("Students in Selected Course")
-        window.geometry("600x400")
+        window.geometry("900x400")
 
         frame = tk.Frame(window)
         frame.grid(padx=10, pady=10, sticky="nsew")
@@ -856,7 +856,7 @@ class CourseManagementGUI:
 
         self.createLabel(
             frame,
-            f"Students in: \n {self.selectedCourse.nameAbreviated} \n- {self.selectedCourse.title}",
+            f"Students in: \n {self.selectedCourse.nameAbreviated} - {self.selectedCourse.title}",
             grid={"row": 0, "column": 0, "columnspan": 1, "sticky": "w"},
             font=("Arial", 11, "bold")
         )
@@ -865,7 +865,7 @@ class CourseManagementGUI:
             frame,
             width=70,
             height=10,
-            grid={"row": 0, "column": 1, "columnspan": 1, "sticky": "nsew"},
+            grid={"row": 1, "column": 0, "columnspan": 5, "sticky": "w"},
             exportselection=False
         )
 
@@ -874,46 +874,53 @@ class CourseManagementGUI:
             # Student has name, studentID, startDate, tutorName
             listbox.insert(tk.END, f"{s.studentID} | {s.name} | Start: {s.startDate} | Tutor: {s.tutorName}")
 
-        # Select button disabled until something is clicked
+        self.createLabel(frame, "Select a student from the list:", grid={"row": 2, "column": 0, "sticky": "w"})
+
+        # Select Student button 
         selectButton = self.createButton(
             frame,
             "Select Student",
             lambda: confirmSelection(),
-            grid={"row": 1, "column": 0, "pady": 10, "sticky": "w"},
+            grid={"row": 3, "column": 0, "pady": 5, "sticky":"we"},
             state="disabled"
         )
-        # Close button
-        self.createButton(
-            frame,
-            "Close",
-            window.destroy,
-            grid={"row": 2, "column": 0, "pady": 10, "sticky": "we"}
-        )
-        # View Assessments + Final Grade
-        self.createButton(
-            frame,
-            "View Assessments + Final Grade",
-            self.showStudentAssessments,
-            grid={"row": 3,"column": 0, "pady": 10, "sticky": "w"}
-        )
-        # Record Assessment for Selected Student
-        self.createButton(
-            frame,
-            "Record Assessment (Selected Student)",
-            self.recordAssessmentForm,
-            grid={"row": 4,"column": 0, "pady": 8, "sticky": "w"}
-        )
+
+        # disabled until something is clicked
+        listbox.bind("<<ListboxSelect>>", select)
+        listbox.bind("<Double-Button-1>", confirmSelection)
 
         # Add Student
         self.createButton(
             frame,
             "Add Student to Selected Course",
             self.addStudentForm,
-            grid={"row": 5, "column": 0, "pady": 8, "sticky": "w"}
+            grid={"row": 3, "column": 1, "pady": 5, "sticky": "we"}
         )
 
-        listbox.bind("<<ListboxSelect>>", select)
-        listbox.bind("<Double-Button-1>", confirmSelection)
+        # View Assessments + Final Grade
+        self.createButton(
+            frame,
+            "View Assessments + Final Grade",
+            self.showStudentAssessments,
+            grid={"row": 4,"column": 0, "pady": 10, "sticky": "w"}
+        )
+        # Record Assessment for Selected Student
+        self.createButton(
+            frame,
+            "Record Assessment (Selected Student)",
+            self.recordAssessmentForm,
+            grid={"row": 5,"column": 0, "pady": 8, "sticky": "w"}
+        )
+        # Close button
+        self.createButton(
+            frame,
+            "Close",
+            window.destroy,
+            grid={"row": 6, "column": 0, "pady": 10, "sticky": "n"}
+        )
+
+
+
 
     # Assessment management methods
     # ============================================================================
