@@ -18,12 +18,12 @@ import pickle
 import uuid
 import re
 import datetime
-
+geometry = "600x500"
 class CourseManagementGUI:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Course Management System")
-        self.root.geometry("400x200")
+        self.root.geometry("500x400")
 
         # Student fields
         self.studentNameEntry = tk.Entry()
@@ -71,8 +71,11 @@ class CourseManagementGUI:
     DATA_DIRECTORY = os.path.join(BASE_DIR, "courseData")
 
     # widget helpers 
+    # ============================================================================
     # Note, Positional args first. Once *args or **kwargs appears, everything must be named.
     # Create explicit groups of keword args 
+    # ============================================================================
+    # Create Button
     def createButton(self, parent, text, command,*,grid=None,font=None, **kwargs):
         btn = tk.Button(parent, text=text, command=command)
         if grid:
@@ -83,6 +86,7 @@ class CourseManagementGUI:
             btn.config(**kwargs)
         return btn
 
+    # Create Label
     def createLabel(self, parent, text, *, grid=None, font=None, **kwargs):
         lbl = tk.Label(parent, text=text)
         if grid:
@@ -92,7 +96,8 @@ class CourseManagementGUI:
         if kwargs:
             lbl.config(**kwargs)
         return lbl
-
+    
+    # Create Entry
     def createEntry(self, parent,*, grid=None, font=None, **kwargs):
         # widget options like width, textvariable, show
         ent = tk.Entry(parent)
@@ -118,7 +123,8 @@ class CourseManagementGUI:
         if kwargs:
             ent.config(**kwargs)
         return ent
-
+    
+    # Create Text Area
     def createTextArea(self, parent, width=40, height=10, *, grid=None, font=None, **kwargs):
         txt = tk.Text(parent, width=width, height=height)
         if grid:
@@ -130,7 +136,7 @@ class CourseManagementGUI:
         return txt
 
     # Listbox stores strings, not objects.
-    # we keep a parallel Python list (students) in the same order you insert items, then
+    # we keep a parallel Python list (students) in the same order you insert items.
     def createListbox(self, parent, width=40, height=10, listvariable=None, *, grid=None, font=None, **kwargs):
         '''
         Docstring for createListbox
@@ -159,6 +165,7 @@ class CourseManagementGUI:
             lst.config(**kwargs)
         return lst
 
+    # Form Entry helper
     def createFormEntry(self, parent, labelText, row, **kwargs):
         """
         Helper to create a Label and an Entry in a standard form layout.
@@ -167,35 +174,11 @@ class CourseManagementGUI:
         self.createLabel(parent, labelText, grid={"column": 0, "row": row, "sticky": "w"})
         return self.createEntry(parent, grid={"column": 1, "row": row, "sticky": "ew"}, **kwargs)
 
-    """
-    Form Builder
-    This module provides a flexible, reusable form creation method for CourseManagementGUI.
-
-    PATTERN :
-    Common elements across addStudentForm, newCourseForm, and recordAssessmentForm:
-    1. Create Toplevel window with title and geometry
-    2. Create Frame with padding
-    3. Add title label (optional, with bold font)
-    4. Create form fields using createFormEntry (label + entry pairs)
-    5. Add additional widgets (listboxes, status labels, etc.)
-    6. Add action buttons (submit, cancel, etc.)
-    7. Define submit callback with validation logic
-
-    DESIGN:
-    The CreatForm method accepts:
-    - title: Window title
-    - geometry: Window size (e.g., "400x300")
-    - form_title: Optional form header text
-    - fields: List of field configurations
-    - widgets: Optional additional widgets to insert
-    - buttons: List of button configurations
-    - submit_callback: Function to call on form submission
-    - validation_callback: Optional pre-submission validation
-
-    """
+    # Form Builder
+    # This module is for creating q form creation method for CourseManagementGUI.
     def CreatForm(self, 
                 title="Form", 
-                geometry="400x300",
+                geometry="500x500",
                 form_title=None,
                 fields=None,
                 additional_widgets=None,
@@ -206,49 +189,46 @@ class CourseManagementGUI:
         Create a reusable form with configurable fields and buttons.
         
         Parameters:
-        -----------
-        title : str
-            Window title
-        geometry : str
-            Window size (e.g., "400x300")
-        form_title : str, optional
-            Bold header text at top of form
-        fields : list of dict
-            Each dict contains:
-            - 'label': str - Label text for the field
-            - 'name': str - Attribute name to store the Entry widget
-            - 'default': str, optional - Default value
-            - 'widget_type': str, optional - 'entry' (default), 'listbox', 'label'
-            - 'widget_options': dict, optional - Additional widget kwargs
-        additional_widgets : list of dict, optional
-            Custom widgets to add at specific rows:
-            - 'type': 'label', 'listbox', 'button', etc.
-            - 'row': int - Row position
-            - 'name': str - Attribute name to store widget reference
-            - 'config': dict - Widget configuration
-        buttons : list of dict
-            Each dict contains:
-            - 'text': str - Button text
-            - 'command': callable - Button callback
-            - 'column': int - Grid column (default 0)
-            - 'state': str, optional - Button state
-        on_submit : callable, optional
-            Callback function when form is submitted
-            Receives dict of {field_name: value}
-        preconditions : callable, optional
-            Function to check before showing form
-            Should return (bool, str) - (is_valid, error_message)
+            title : str
+                Window title
+            geometry : str
+                Window size (e.g., "400x300")
+            form_title : str, optional
+                Bold header text at top of form
+            fields : list of dict
+                Each dict contains:
+                - 'label': str - Label text for the field
+                - 'name': str - Attribute name to store the Entry widget
+                - 'default': str, optional - Default value
+                - 'widget_type': str, optional - 'entry' (default), 'listbox', 'label'
+                - 'widget_options': dict, optional - Additional widget kwargs
+            additional_widgets : list of dict, optional
+                Custom widgets to add at specific rows:
+                - 'type': 'label', 'listbox', 'button', etc.
+                - 'row': int - Row position
+                - 'name': str - Attribute name to store widget reference
+                - 'config': dict - Widget configuration
+            buttons : list of dict
+                Each dict contains:
+                - 'text': str - Button text
+                - 'command': callable - Button callback
+                - 'column': int - Grid column (default 0)
+                - 'state': str, optional - Button state
+            on_submit : callable, optional
+                Callback function when form is submitted
+                Receives dict of {field_name: value}
+            preconditions : callable, optional
+                Function to check before showing form
+                Should return (bool, str) - (is_valid, error_message)
         
         Returns:
-        --------
         dict containing:
             - 'window': Toplevel window reference
             - 'frame': Frame reference
             - 'widgets': dict of all created widgets by name
         
         Example Usage:
-        --------------
-        # Simple student form
+        # Simple form
         form_config = {
             'title': 'Add Student',
             'geometry': '400x300',
@@ -382,6 +362,7 @@ class CourseManagementGUI:
     def checkDataDirectory(self):
         os.makedirs(self.DATA_DIRECTORY, exist_ok=True)
 
+    # Make filename safe
     def safeafyFileName(self, name:str):
         name = name.strip()
 
@@ -405,6 +386,7 @@ class CourseManagementGUI:
             name = "course_" + str(uuid.uuid4())
         return name
 
+    # Generate course filename
     def courseFilename(self, courseObj:CourseClass.Course):
         # filename with a uuid to avoid douplicates
         name = self.safeafyFileName(courseObj.nameAbreviated)
@@ -446,6 +428,7 @@ class CourseManagementGUI:
 
         return loadedCourses
 
+    # Save selected course
     def saveSelectedCourse(self):
         if not self.selectedCourse:
             return
@@ -457,7 +440,7 @@ class CourseManagementGUI:
             # fallback: treat it like a new course
             self.saveCourseToFile(self.selectedCourse)
 
-
+    # Save all courses
     def saveAllCourses(self):
         """
         loop through all self.courses
@@ -475,6 +458,7 @@ class CourseManagementGUI:
                 # Course has no known filepath yet -> treat like new and create a file
                 self.saveCourseToFile(course)
 
+    # Shutdown process
     def shutDown(self):
         """
         shutDown process for the Quit button and window close event.
@@ -495,8 +479,6 @@ class CourseManagementGUI:
     # Course management methods
     # ============================================================================
     # Simplified Course Form (without assessment complexity)
-    # ============================================================================
-
     def courseForm(self):
         """
         Example showing how to create a simple course form.
@@ -547,7 +529,7 @@ class CourseManagementGUI:
         
         form_refs = self.CreatForm(
             title="New Course Form",
-            geometry="500x400",
+            geometry="500x500",
             form_title="New Course Form",
             fields=[
                 {'label': 'Course Name:', 'name': 'courseName'},
@@ -563,6 +545,7 @@ class CourseManagementGUI:
             ]
         )
 
+    # Compute total assessment weight
     def computeTotal(self):
         total = sum(w for (_aid, _aname, w) in self.assessments)
         self.totalWeight.set(total)
@@ -582,11 +565,8 @@ class CourseManagementGUI:
             self.submitButton.config(state="disabled")
             self.addAssessmentButton.config(state="normal")
 
-    # ============================================================================
     # Record Assessment Form with Listbox
-    # ============================================================================
-
-    def recordAssessmentForm_REFACTORED(self):
+    def addAssessmentForm(self):
         """Refactored recordAssessmentForm using CreatForm with listbox"""
         
         def saveMark():
@@ -632,7 +612,7 @@ class CourseManagementGUI:
         # Create form
         form_refs = self.CreatForm(
             title="Record Assessment Mark",
-            geometry="560x360",
+            geometry="560x500",
             form_title=f"Student: {self.selectedStudent.name} ({self.selectedStudent.studentID})",
             fields=[
                 {
@@ -671,7 +651,7 @@ class CourseManagementGUI:
         listbox.bind("<<ListboxSelect>>", onSelect)
         listbox.bind("<Double-Button-1>", onSelect)
 
-    
+    # Show Course List
     def showCourseList(self):
                 # Read the selected row index from the Listbox, 
         # then use that index to grab the correct Course object from self.courses.
@@ -706,7 +686,7 @@ class CourseManagementGUI:
         
         window = tk.Toplevel(self.root)
         window.title("Courses Available")
-        window.geometry("400x300")
+        window.geometry("500x400")
         
         frame = tk.Frame(window)
         frame.grid(padx=10, pady=10)
@@ -765,8 +745,6 @@ class CourseManagementGUI:
     # Student management methods
     # ============================================================================
     # Refactored addStudentForm
-    # ============================================================================
-
     def addStudentForm(self):
         """Refactored using CreatForm method"""
 
@@ -817,7 +795,7 @@ class CourseManagementGUI:
         # Configure and create form
         form_refs = self.CreatForm(
             title="Add Student",
-            geometry="400x300",
+            geometry="500x400",
             form_title=f"Add A Student to: {self.selectedCourse.nameAbreviated if self.selectedCourse else 'N/A'}",
             fields=[
                 {'label': 'Student Name:', 'name': 'studentName'},
@@ -832,7 +810,7 @@ class CourseManagementGUI:
             preconditions=check_preconditions
         )
 
-
+    # Show Student List
     def showStudentList(self):
         def select(event=None):
             if listbox.curselection():
@@ -873,7 +851,7 @@ class CourseManagementGUI:
 
         window = tk.Toplevel(self.root)
         window.title("Students in Selected Course")
-        window.geometry("560x340")
+        window.geometry("600x400")
 
         frame = tk.Frame(window)
         frame.grid(padx=10, pady=10, sticky="nsew")
@@ -942,6 +920,7 @@ class CourseManagementGUI:
         listbox.bind("<Double-Button-1>", confirmSelection)
 
     # Assessment management methods
+    # ============================================================================
     # calculate final grade for selected student
     def calculateFinalGrade(self, student):
         """
@@ -966,7 +945,7 @@ class CourseManagementGUI:
 
         win = tk.Toplevel(self.root)
         win.title("Record Assessment Mark")
-        win.geometry("560x360")
+        win.geometry("600x400")
 
         frame = tk.Frame(win)
         frame.grid(padx=10, pady=10, sticky="nsew")
@@ -1059,7 +1038,7 @@ class CourseManagementGUI:
 
         window = tk.Toplevel(self.root)
         window.title("Assessments + Final Grade")
-        window.geometry("600x360")
+        window.geometry("600x400")
 
         frame = tk.Frame(window)
         frame.grid(padx=10, pady=10, sticky="nsew")
