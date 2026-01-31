@@ -176,15 +176,8 @@ class CourseManagementGUI:
 
     # Form Builder
     # This module is for creating q form creation method for CourseManagementGUI.
-    def CreatForm(self, 
-                title="Form", 
-                geometry="500x500",
-                form_title=None,
-                fields=None,
-                additional_widgets=None,
-                buttons=None,
-                on_submit=None,
-                preconditions=None):
+    def CreatForm(self, title="Form", geometry="500x500", form_title=None, fields=None, 
+                  additional_widgets=None, buttons=None, on_submit=None, preconditions=None):
         """
         Create a reusable form with configurable fields and buttons.
         
@@ -247,13 +240,6 @@ class CourseManagementGUI:
         form_refs = self.CreatForm(**form_config)
         """
         
-        # Check preconditions
-        if preconditions:
-            is_valid, error_msg = preconditions()
-            if not is_valid:
-                messagebox.showwarning("Precondition Failed", error_msg)
-                return None
-        
         # Create window
         window = tk.Toplevel(self.root)
         window.title(title)
@@ -265,6 +251,15 @@ class CourseManagementGUI:
         
         row = 0
         widgets = {}
+
+        # Check preconditions
+        if preconditions:
+            is_valid, error_msg = preconditions()
+            if not is_valid:
+                messagebox.showwarning("Precondition Failed", error_msg)
+                return None
+        
+
         
         # Add form title if provided
         if form_title:
@@ -653,7 +648,15 @@ class CourseManagementGUI:
 
     # Show Course List
     def showCourseList(self):
-                # Read the selected row index from the Listbox, 
+
+        window = tk.Toplevel(self.root)
+        window.title("Courses Available")
+        window.geometry("500x400")
+        
+        frame = tk.Frame(window)
+        frame.grid(padx=10, pady=10)
+
+        # Read the selected row index from the Listbox, 
         # then use that index to grab the correct Course object from self.courses.
         def confirmSelection(event=None):
             selection = listbox.curselection() # tuple of indices
@@ -682,14 +685,7 @@ class CourseManagementGUI:
 
         if not courses:
             messagebox.showinfo("No courses", "No courses available to display.")
-            
-        
-        window = tk.Toplevel(self.root)
-        window.title("Courses Available")
-        window.geometry("500x400")
-        
-        frame = tk.Frame(window)
-        frame.grid(padx=10, pady=10)
+
         titleLabel = self.createLabel(
             frame, 
             "Select a course from the list:", 
@@ -812,6 +808,16 @@ class CourseManagementGUI:
 
     # Show Student List
     def showStudentList(self):
+
+        window = tk.Toplevel(self.root)
+        window.title("Students in Selected Course")
+        window.geometry("600x400")
+
+        frame = tk.Frame(window)
+        frame.grid(padx=10, pady=10, sticky="nsew")
+        frame.grid_columnconfigure(0, weight=1)
+        frame.grid_rowconfigure(1, weight=1)
+    
         def select(event=None):
             if listbox.curselection():
                 selectButton.config(state="normal")
@@ -847,21 +853,11 @@ class CourseManagementGUI:
         # Course uses registeredStudents
         if not students:
             messagebox.showinfo("No students", "This course has no students yet.")
-            
-
-        window = tk.Toplevel(self.root)
-        window.title("Students in Selected Course")
-        window.geometry("600x400")
-
-        frame = tk.Frame(window)
-        frame.grid(padx=10, pady=10, sticky="nsew")
-        frame.grid_columnconfigure(0, weight=1)
-        frame.grid_rowconfigure(1, weight=1)
 
         self.createLabel(
             frame,
-            f"Students in: {self.selectedCourse.nameAbreviated} - {self.selectedCourse.title}",
-            grid={"row": 0, "column": 0, "columnspan": 2, "sticky": "w"},
+            f"Students in: \n {self.selectedCourse.nameAbreviated} \n- {self.selectedCourse.title}",
+            grid={"row": 0, "column": 0, "columnspan": 1, "sticky": "w"},
             font=("Arial", 11, "bold")
         )
 
@@ -869,7 +865,7 @@ class CourseManagementGUI:
             frame,
             width=70,
             height=10,
-            grid={"row": 1, "column": 0, "columnspan": 2, "sticky": "nsew"},
+            grid={"row": 0, "column": 1, "columnspan": 1, "sticky": "nsew"},
             exportselection=False
         )
 
@@ -883,7 +879,7 @@ class CourseManagementGUI:
             frame,
             "Select Student",
             lambda: confirmSelection(),
-            grid={"row": 2, "column": 0, "pady": 10, "sticky": "w"},
+            grid={"row": 1, "column": 0, "pady": 10, "sticky": "w"},
             state="disabled"
         )
         # Close button
@@ -891,7 +887,7 @@ class CourseManagementGUI:
             frame,
             "Close",
             window.destroy,
-            grid={"row": 2, "column": 1, "pady": 10, "sticky": "w"}
+            grid={"row": 2, "column": 0, "pady": 10, "sticky": "we"}
         )
         # View Assessments + Final Grade
         self.createButton(
@@ -900,7 +896,7 @@ class CourseManagementGUI:
             self.showStudentAssessments,
             grid={"row": 3,"column": 0, "pady": 10, "sticky": "w"}
         )
-
+        # Record Assessment for Selected Student
         self.createButton(
             frame,
             "Record Assessment (Selected Student)",
@@ -1029,12 +1025,6 @@ class CourseManagementGUI:
 
     # show assessments and final grade for selected student
     def showStudentAssessments(self):
-        if self.selectedCourse is None:
-            messagebox.showwarning("No course selected", "Select a course first.")
-            return
-        if self.selectedStudent is None:
-            messagebox.showwarning("No student selected", "Select a student first.")
-            return
 
         window = tk.Toplevel(self.root)
         window.title("Assessments + Final Grade")
@@ -1044,6 +1034,15 @@ class CourseManagementGUI:
         frame.grid(padx=10, pady=10, sticky="nsew")
         frame.grid_columnconfigure(0, weight=1)
         frame.grid_rowconfigure(2, weight=1)
+
+        if self.selectedCourse is None:
+            messagebox.showwarning("No course selected", "Select a course first.")
+            return
+        if self.selectedStudent is None:
+            messagebox.showwarning("No student selected", "Select a student first.")
+            return
+
+
 
         finalGrade = self.calculateFinalGrade(self.selectedStudent)
 
